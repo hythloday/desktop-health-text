@@ -12,6 +12,12 @@ ShowWindowTitleOnTitleBar=false
 [MainWindow]
 MenuBar=Disabled
 
+[MainWindow][Toolbar mainToolBar]
+Hidden=true
+
+[MainWindow][Toolbar sessionToolbar]
+Hidden=true
+
 [TabBar]
 NewTabButton=false
 TabBarVisibility=AlwaysHideTabBar
