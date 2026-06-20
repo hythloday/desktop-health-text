@@ -3,8 +3,9 @@
 # re-applies KWin rules so the window snaps to its pinned top-right position
 # (Konsole's initial placement otherwise wins a race against the position rule).
 
-# Don't start a second copy if one is already running.
-if pgrep -f 'desktop-health.sh' >/dev/null 2>&1; then
+# Don't start a second copy if one is already running. The leading slash keeps
+# this from matching the launcher itself ("start-desktop-health.sh").
+if pgrep -f '/desktop-health.sh' >/dev/null 2>&1; then
     exit 0
 fi
 

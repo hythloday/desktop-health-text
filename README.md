@@ -99,6 +99,13 @@ tree mirrors the destination layout (with `dot-` standing in for `.`).
 | Transparency | `Opacity` in `HealthTransparent.colorscheme` (0 = invisible, 1 = solid) |
 | Borderless / keep-below / etc. | `kwinrulesrc` |
 
+### Restarting it to see changes
+
+```
+pkill -f '/desktop-health.sh'
+~/.local/bin/start-desktop-health.sh
+```
+
 ### Temperature thresholds (default)
 
 These colour both the temperature text and its dot.
