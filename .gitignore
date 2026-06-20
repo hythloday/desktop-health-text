@@ -1,0 +1,11 @@
+# Editor / OS cruft
+*~
+*.swp
+*.swo
+.DS_Store
+
+# Stow state
+.stow-local-ignore
+
+# Downloaded font assets (see README — installed separately, not committed)
+dot-local/share/fonts/

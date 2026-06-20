@@ -1,0 +1,117 @@
+# desktop-health-text
+
+A transparent, borderless PC-health readout pinned to the top-right corner of the
+KDE Plasma (Wayland) desktop. It renders [`fastfetch`](https://github.com/fastfetch-cli/fastfetch)
+output — CPU/GPU/NVMe/PSU/WiFi sensors plus RAM, disk, load and uptime — inside a
+chrome-less [Konsole](https://konsole.kde.org/) window, right-justified, with a
+green / amber / red status dot next to each temperature.
+
+It's essentially a Conky-style overlay, but built from tools that work natively on
+Wayland (no XWayland, no extra daemons) and styled to match Bazzite's `fastfetch`
+aesthetic.
+
+```
+                              james@desktop
+   CPU  AMD Ryzen 9 3950X (32) @ 4.76 GHz - 59.1°C  ●
+   GPU  NVIDIA GeForce RTX 2080 Ti - 53.0°C [Discrete]  ●
+                              NVMe sys   +64.8°C  ●
+                              NVMe data  +29.9°C  ●
+                                 PSU 12V  12.04 V
+                                    WiFi  +65.0°C  ●
+                  RAM   17.6 GiB / 62.7 GiB (28%)
+        Disk  88.2 GiB / 3.64 TiB (2%) - btrfs
+                        Load  0.28, 0.74, 0.87
+                Uptime  1 day, 12 hours, 33 mins
+                              ● ● ● ● ● ● ● ●
+```
+
+## How it works
+
+- **`desktop-health.sh`** — the refresh loop. Runs `fastfetch` (with `--pipe false`
+  so colour is kept even though output is piped), pipes it through `awk` to append a
+  threshold-based status dot to each temperature line and right-justify every row,
+  then redraws the frame every few seconds.
+- **`health.jsonc`** — the `fastfetch` config: which modules/sensors are shown
+  (logo disabled).
+- **`Health.profile` + `HealthTransparent.colorscheme`** — a dedicated Konsole
+  profile: Anonymice Nerd Font Mono, fully transparent background, no scrollbar.
+- **`konsole-health/konsolerc`** — Konsole settings scoped to *this* window only
+  (via a private `XDG_CONFIG_HOME`), so your normal Konsole keeps its menubar/tabbar.
+- **`kwinrulesrc`** — a KWin window rule matching the window title `DesktopHealth`:
+  borderless, keep-below, no taskbar/pager/switcher entry.
+- **`snap-topright.js`** — a KWin script that snaps the content-sized window flush
+  into the top-right corner of the work area.
+- **`start-desktop-health.sh`** — launcher: opens the Konsole with the scoped config,
+  then runs the snap script. Invoked at login by `desktop-health.desktop`.
+
+## Requirements
+
+- KDE Plasma 6 (Wayland) — KWin + Konsole
+- `fastfetch`
+- `lm_sensors` (`sensors`) — run `sudo sensors-detect` once if needed
+- `gawk` (multibyte `length()` is required for correct alignment)
+- `qdbus` (Qt 6) — used to drive KWin scripting
+- NVIDIA driver if you want GPU temperature (read via `fastfetch`)
+- **Anonymice Nerd Font** — installed separately (see below)
+
+### Install the font
+
+```sh
+mkdir -p ~/.local/share/fonts/AnonymicePro
+curl -fsSL https://github.com/ryanoasis/nerd-fonts/releases/latest/download/AnonymousPro.tar.xz \
+  | tar -xJ -C ~/.local/share/fonts/AnonymicePro
+fc-cache -f ~/.local/share/fonts
+```
+
+Profile font family: `AnonymicePro Nerd Font Mono`.
+
+## Install
+
+This repo uses the GNU Stow `--dotfiles` layout (`dot-config/` → `~/.config/`,
+`dot-local/` → `~/.local/`).
+
+```sh
+cd ~/Projects/desktop-health-text
+stow --dotfiles -t "$HOME" .
+```
+
+Then start it (or just log out and back in — `desktop-health.desktop` autostarts it):
+
+```sh
+~/.local/bin/start-desktop-health.sh
+```
+
+No Stow? Copy/symlink each file to the matching path under `~` manually — the repo
+tree mirrors the destination layout (with `dot-` standing in for `.`).
+
+## Customising
+
+| Want to change… | Where |
+|---|---|
+| Which sensors are shown | `health.jsonc` |
+| Refresh interval (default 5s) | `INTERVAL` in `desktop-health.sh` |
+| Temperature dot thresholds | the `dot(n, warn, hot)` calls in `desktop-health.sh` |
+| Window position / corner | `snap-topright.js` |
+| Right-edge margin | `TerminalColumns` in `Health.profile` (content width + margin) |
+| Transparency | `Opacity` in `HealthTransparent.colorscheme` (0 = invisible, 1 = solid) |
+| Borderless / keep-below / etc. | `kwinrulesrc` |
+
+### Dot thresholds (default)
+
+| Sensor | green | amber | red |
+|---|---|---|---|
+| CPU / GPU | < 65°C | 65–80°C | ≥ 80°C |
+| NVMe | < 55°C | 55–70°C | ≥ 70°C |
+| WiFi | < 60°C | 60–72°C | ≥ 72°C |
+
+## Caveats
+
+- **Hardware-specific sensors.** `health.jsonc` references chip names from *this*
+  machine (`nvme-pci-0100`, `nvme-pci-0400`, `corsaircpro-hid-3-3`, `iwlwifi_1`).
+  Run `sensors` on your own system and edit the `command` modules to match.
+- **KDE may rewrite some files.** `kwinrulesrc` and `konsole-health/konsolerc` are
+  KDE-managed; changing related settings via a KDE GUI rewrites the file with an
+  atomic rename, which breaks a hardlink and replaces a Stow symlink. `kwinrulesrc`
+  in particular is shared — if you add other window rules later, reconcile by hand.
+- **Single virtual desktop.** The panel lives on the desktop it was launched on; it
+  does not follow you across virtual desktops.
