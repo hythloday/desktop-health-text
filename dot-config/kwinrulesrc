@@ -1,0 +1,21 @@
+[General]
+count=1
+rules=03cdb7e2-b8a7-4d79-9446-46296a114da2
+
+[03cdb7e2-b8a7-4d79-9446-46296a114da2]
+Description=Desktop Health Monitor
+below=true
+belowrule=2
+noborder=true
+noborderrule=2
+skippager=true
+skippagerrule=2
+skipswitcher=true
+skipswitcherrule=2
+skiptaskbar=true
+skiptaskbarrule=2
+title=DesktopHealth
+titlematch=2
+wmclass=org.kde.konsole
+wmclasscomplete=false
+wmclassmatch=1

@@ -1,0 +1,20 @@
+[Desktop Entry]
+DefaultProfile=Health.profile
+
+[General]
+ConfigVersion=1
+
+[KonsoleWindow]
+RememberWindowSize=false
+ShowMenuBarByDefault=false
+ShowWindowTitleOnTitleBar=false
+
+[MainWindow]
+MenuBar=Disabled
+
+[TabBar]
+NewTabButton=false
+TabBarVisibility=AlwaysHideTabBar
+
+[UiSettings]
+ColorScheme=

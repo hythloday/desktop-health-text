@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Desktop Health Monitor
+Comment=fastfetch sensor panel pinned to the desktop
+Exec=/home/james/.local/bin/start-desktop-health.sh
+Icon=utilities-system-monitor
+Terminal=false
+X-KDE-autostart-after=plasmashell
+X-GNOME-Autostart-Delay=3
+NoDisplay=false
