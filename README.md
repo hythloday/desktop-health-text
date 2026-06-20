@@ -3,8 +3,8 @@
 A transparent, borderless PC-health readout pinned to the top-right corner of the
 KDE Plasma (Wayland) desktop. It renders [`fastfetch`](https://github.com/fastfetch-cli/fastfetch)
 output — CPU/GPU/NVMe/PSU/WiFi sensors plus RAM, disk, load and uptime — inside a
-chrome-less [Konsole](https://konsole.kde.org/) window, right-justified, with a
-green / amber / red status dot next to each temperature.
+chrome-less [Konsole](https://konsole.kde.org/) window, right-justified, with each
+temperature — and a status dot beside it — coloured green / amber / red by threshold.
 
 It's essentially a Conky-style overlay, but built from tools that work natively on
 Wayland (no XWayland, no extra daemons) and styled to match Bazzite's `fastfetch`
@@ -28,9 +28,12 @@ aesthetic.
 ## How it works
 
 - **`desktop-health.sh`** — the refresh loop. Runs `fastfetch` (with `--pipe false`
-  so colour is kept even though output is piped), pipes it through `awk` to append a
-  threshold-based status dot to each temperature line and right-justify every row,
-  then redraws the frame every few seconds.
+  so colour is kept even though output is piped), pipes it through `awk` to, for each
+  temperature line, colour the temperature **text** and append a status dot — both
+  green/amber/red by the same per-sensor threshold — then right-justifies every row
+  (so the dots line up at the far right) and redraws the frame every few seconds.
+  Doing the colouring here is what lets `command`-based sensors (NVMe, WiFi) get the
+  same treatment as the built-in CPU/GPU modules.
 - **`health.jsonc`** — the `fastfetch` config: which modules/sensors are shown
   (logo disabled).
 - **`Health.profile` + `HealthTransparent.colorscheme`** — a dedicated Konsole
@@ -90,13 +93,16 @@ tree mirrors the destination layout (with `dot-` standing in for `.`).
 |---|---|
 | Which sensors are shown | `health.jsonc` |
 | Refresh interval (default 5s) | `INTERVAL` in `desktop-health.sh` |
-| Temperature dot thresholds | the `dot(n, warn, hot)` calls in `desktop-health.sh` |
+| Temperature colour/dot thresholds | the per-sensor `warn`/`hot` values in `desktop-health.sh` |
 | Window position / corner | `snap-topright.js` |
 | Right-edge margin | `TerminalColumns` in `Health.profile` (content width + margin) |
 | Transparency | `Opacity` in `HealthTransparent.colorscheme` (0 = invisible, 1 = solid) |
 | Borderless / keep-below / etc. | `kwinrulesrc` |
 
-### Dot thresholds (default)
+### Temperature thresholds (default)
+
+These colour both the temperature text and its dot.
+
 
 | Sensor | green | amber | red |
 |---|---|---|---|
