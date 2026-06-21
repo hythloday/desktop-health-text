@@ -42,9 +42,10 @@ while true; do
 
             warn = 0; hot = 0; has = 0
             if (val != "") {
-                if      (s ~ /CPU/)  { warn = 65; hot = 80; has = 1 }
-                else if (s ~ /GPU/)  { warn = 65; hot = 80; has = 1 }
-                else if (s ~ /NVMe/) { warn = 55; hot = 70; has = 1 }
+                if      (s ~ /CPU/)     { warn = 65; hot = 80; has = 1 }
+                else if (s ~ /GPU/)     { warn = 65; hot = 80; has = 1 }
+                else if (s ~ /Coolant/) { warn = 50; hot = 58; has = 1 }
+                else if (s ~ /NVMe/)    { warn = 55; hot = 70; has = 1 }
                 else if (s ~ /WiFi/) { warn = 60; hot = 72; has = 1 }
             }
 

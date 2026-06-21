@@ -54,6 +54,7 @@ aesthetic.
 - `lm_sensors` (`sensors`) — run `sudo sensors-detect` once if needed
 - `gawk` (multibyte `length()` is required for correct alignment)
 - `qdbus` (Qt 6) — used to drive KWin scripting
+- `liquidctl` (in `~/.local/bin`) — only for the Coolant sensor (Corsair AIO liquid temp); drop that `command` module if you have no liquid cooler
 - NVIDIA driver if you want GPU temperature (read via `fastfetch`)
 - **Anonymice Nerd Font** — installed separately (see below)
 
@@ -114,6 +115,7 @@ These colour both the temperature text and its dot.
 | Sensor | green | amber | red |
 |---|---|---|---|
 | CPU / GPU | < 65°C | 65–80°C | ≥ 80°C |
+| Coolant | < 50°C | 50–58°C | ≥ 58°C |
 | NVMe | < 55°C | 55–70°C | ≥ 70°C |
 | WiFi | < 60°C | 60–72°C | ≥ 72°C |
 
