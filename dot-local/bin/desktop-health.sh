@@ -9,8 +9,15 @@ INTERVAL="${1:-5}"   # refresh seconds (default 5)
 printf '\033]0;DesktopHealth\007'
 # Hide the cursor.
 printf '\033[?25l'
-# Restore cursor on exit.
-trap 'printf "\033[?25h"' EXIT
+# Stop the panel's text being selectable: enable mouse drag reporting (1002) so
+# Konsole forwards drags to this program instead of selecting text. The reported
+# bytes land on our stdin, which we never read — so we must also turn OFF terminal
+# echo, otherwise the tty echoes those bytes back onto the screen as "[M..." junk.
+saved_stty="$(stty -g 2>/dev/null)"
+stty -echo 2>/dev/null
+printf '\033[?1002h'
+# On exit: restore cursor, disable mouse reporting, restore terminal settings.
+trap 'printf "\033[?25h\033[?1002l"; [ -n "$saved_stty" ] && stty "$saved_stty" 2>/dev/null' EXIT
 
 while true; do
     # --pipe false forces colour codes even though our stdout is a pipe (awk),
