@@ -22,6 +22,7 @@ aesthetic.
         Disk  88.2 GiB / 3.64 TiB (2%) - btrfs
                         Load  0.28, 0.74, 0.87
                 Uptime  1 day, 12 hours, 33 mins
+       RAID  0.15% · 467M/s · 2 days 06:36:01 left
                               ● ● ● ● ● ● ● ●
 ```
 
@@ -36,6 +37,14 @@ aesthetic.
   same treatment as the built-in CPU/GPU modules.
 - **`health.jsonc`** — the `fastfetch` config: which modules/sensors are shown
   (logo disabled).
+- **`raid-expand.sh`** — the `RAID` line's data source: reports a NAS's ZFS
+  raidz-expansion progress (`zpool status` over SSH) as one compact
+  `percent · rate · ETA` line. Because an SSH round-trip is slow relative to the
+  5s refresh — and would stall the redraw if the box were down — it never blocks:
+  it prints a cached answer instantly and, when stale, kicks off a detached
+  background refresh, so the NAS is polled at most once every ~30s. Shows `idle`
+  when no expansion is running and `complete` when one finishes. Drop this
+  `command` module (and script) if you have no such pool to watch.
 - **`Health.profile` + `HealthTransparent.colorscheme`** — a dedicated Konsole
   profile: Anonymice Nerd Font Mono, fully transparent background, no scrollbar.
 - **`konsole-health/konsolerc`** — Konsole settings scoped to *this* window only
@@ -55,6 +64,7 @@ aesthetic.
 - `gawk` (multibyte `length()` is required for correct alignment)
 - `qdbus` (Qt 6) — used to drive KWin scripting
 - `liquidctl` (in `~/.local/bin`) — only for the Coolant sensor (Corsair AIO liquid temp); drop that `command` module if you have no liquid cooler
+- passwordless SSH (key-based, `BatchMode`) to the NAS — only for the `RAID` expansion line; drop that `command` module if you don't run a ZFS box
 - NVIDIA driver if you want GPU temperature (read via `fastfetch`)
 - **Anonymice Nerd Font** — installed separately (see below)
 
