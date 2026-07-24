@@ -26,8 +26,6 @@
         { "type": "loadavg", "key": " 󰓅  Load " },
         { "type": "uptime", "key": " 󰅐  Uptime" },
         "break",
-        { "type": "command", "key": " 󰆼  RAID ", "text": "$HOME/.local/bin/raid-expand.sh" },
-        "break",
         { "type": "colors", "paddingLeft": 2, "symbol": "circle" }
     ]
 }
